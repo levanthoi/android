@@ -11,7 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class Login extends AppCompatActivity {
+import com.example.a63cntt1.home.activities.HomeActivity;
+
+public class LoginActivity extends AppCompatActivity {
 
     EditText username;
     EditText password;
@@ -46,7 +48,7 @@ public class Login extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(Login.this, MainActivity.class);
+                Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(i);
             }
         });
@@ -88,9 +90,9 @@ public class Login extends AppCompatActivity {
         if (isValid) {
             String usernameValue = username.getText().toString();
             String passwordValue = password.getText().toString();
-            if (usernameValue.equals("test@test.com") && passwordValue.equals("password1234")) {
+            if (usernameValue.equals("test@test.com") && passwordValue.equals("123456")) {
                 //everything checked we open new activity
-                Intent i = new Intent(Login.this, MainActivity.class);
+                Intent i = new Intent(LoginActivity.this, HomeActivity.class);
                 startActivity(i);
                 //we close this activity
                 this.finish();
