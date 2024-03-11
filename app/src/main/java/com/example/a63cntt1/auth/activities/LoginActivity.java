@@ -1,5 +1,6 @@
-package com.example.a63cntt1;
+package com.example.a63cntt1.auth.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -11,7 +12,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.a63cntt1.R;
 import com.example.a63cntt1.home.activities.HomeActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -19,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText password;
     Button register;
     Button login;
+    private FirebaseAuth auth;
 
     boolean isEmpty(EditText text) {
         CharSequence str = text.getText().toString();
@@ -35,6 +43,8 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.password);
         register = findViewById(R.id.register);
         login = findViewById(R.id.login);
+
+        auth = FirebaseAuth.getInstance();
     }
 
     private void setupListeners() {
@@ -84,22 +94,29 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
-        //check email and password
-        //IMPORTANT: here should be call to backend or safer function for local check; For example simple check is cool
-        //For example simple check is cool
         if (isValid) {
-            String usernameValue = username.getText().toString();
-            String passwordValue = password.getText().toString();
-            if (usernameValue.equals("test@test.com") && passwordValue.equals("123456")) {
-                //everything checked we open new activity
-                Intent i = new Intent(LoginActivity.this, HomeActivity.class);
-                startActivity(i);
-                //we close this activity
-                this.finish();
-            } else {
-                Toast t = Toast.makeText(this, "Wrong email or password!", Toast.LENGTH_SHORT);
-                t.show();
-            }
+            String usernameValue = username.getText().toString().trim();
+            String passwordValue = password.getText().toString().trim();
+            auth.signInWithEmailAndPassword(usernameValue, passwordValue).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+//                        Log.d(TAG, "signInWithEmail:success");
+                        FirebaseUser user = auth.getCurrentUser();
+                        Toast.makeText(LoginActivity.this, "Login successful.", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                        finish();
+//                        updateUI(user);
+                    } else {
+                        // If sign in fails, display a message to the user.
+//                        Log.w(TAG, "signInWithEmail:failure", task.getException());
+                        Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
+//                        updateUI(null);
+                    }
+                }
+            });
         }
     }
 }

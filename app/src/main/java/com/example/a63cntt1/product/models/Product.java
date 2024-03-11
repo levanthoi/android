@@ -4,15 +4,17 @@ import android.net.Uri;
 
 public class Product {
     int id;
-    String product_name;
-    String product_price;
-    Uri image;
+    String name;
+    String price;
+    String image;
 
+    public Product() {
+    }
 
-    public Product(int id, String product_name, String product_price, Uri image) {
-        this.id = id;
-        this.product_name = product_name;
-        this.product_price = product_price;
+    public Product(String name, String price, String image) {
+//        this.id = id;
+        this.name = name;
+        this.price = price;
         this.image = image;
     }
 
@@ -24,27 +26,27 @@ public class Product {
         this.id = id;
     }
 
-    public String getProduct_name() {
-        return product_name;
+    public String getName() {
+        return name;
     }
 
-    public void setProduct_name(String product_name) {
-        this.product_name = product_name;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getProduct_price() {
-        return product_price;
+    public String getPrice() {
+        return price;
     }
 
-    public void setProduct_price(String product_price) {
-        this.product_price = product_price;
+    public void setPrice(String price) {
+        this.price = price;
     }
 
-    public Uri getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(Uri image) {
+    public void setImage(String image) {
         this.image = image;
     }
 }

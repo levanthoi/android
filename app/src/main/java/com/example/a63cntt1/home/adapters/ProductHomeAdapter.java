@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.a63cntt1.R;
 import com.example.a63cntt1.product.models.Product;
 
@@ -34,9 +35,9 @@ public class ProductHomeAdapter extends RecyclerView.Adapter<ProductHomeAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final  Product p = products.get(position);
-        holder.product_name.setText(p.getProduct_name());
-        holder.product_price.setText(p.getProduct_price());
-        holder.product_image.setImageURI(p.getImage());
+        holder.product_name.setText(p.getName());
+        holder.product_price.setText(p.getPrice());
+        Glide.with(ctx).load(p.getImage()).into(holder.product_image);
 
         holder.btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,7 +48,7 @@ public class ProductHomeAdapter extends RecyclerView.Adapter<ProductHomeAdapter.
     }
 
     private void handleClick(Product p) {
-        Toast.makeText(ctx, "Thêm "+p.getProduct_name() + " thành công !!!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(ctx, "Thêm "+p.getName() + " thành công !!!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
