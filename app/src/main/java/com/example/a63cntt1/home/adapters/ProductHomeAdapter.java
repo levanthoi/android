@@ -14,12 +14,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.a63cntt1.R;
 import com.example.a63cntt1.product.models.Product;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProductHomeAdapter extends RecyclerView.Adapter<ProductHomeAdapter.ViewHolder> {
     private List<Product> products;
     private Context ctx;
+    private FirebaseAuth fauth;
     public ProductHomeAdapter(Context ctx, List<Product> products) {
         this.products = products;
         this.ctx = ctx;
@@ -48,7 +56,26 @@ public class ProductHomeAdapter extends RecyclerView.Adapter<ProductHomeAdapter.
     }
 
     private void handleClick(Product p) {
-        Toast.makeText(ctx, "Thêm "+p.getName() + " thành công !!!", Toast.LENGTH_SHORT).show();
+        fauth = FirebaseAuth.getInstance();
+        final Map<String, Object> cartMap = new HashMap<>();
+        cartMap.put("name", p.getName());
+        cartMap.put("price", p.getPrice());
+        cartMap.put("image", p.getImage());
+
+        DocumentReference cartRef = FirebaseFirestore.getInstance().collection("cart").document(fauth.getCurrentUser().getUid());
+
+        cartRef.set(cartMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Toast.makeText(ctx, "Thêm "+p.getName() + " thành công !!!", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(ctx, "Có lỗi xảy ra !!!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @Override

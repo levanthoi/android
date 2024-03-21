@@ -10,15 +10,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.a63cntt1.R;
+import com.example.a63cntt1.cart.activities.CartActivity;
 import com.example.a63cntt1.home.adapters.ProductHomeAdapter;
 import com.example.a63cntt1.product.models.Product;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -38,6 +41,7 @@ public class HomeActivity extends AppCompatActivity {
     FirebaseFirestore db;
     ProductHomeAdapter productAdapter;
     ProgressBar progressBar;
+    Button btn_cart;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,14 +53,23 @@ public class HomeActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Home");
 
         rcl_product = findViewById(R.id.rcl_product);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        btn_cart = findViewById(R.id.cart);
+//        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         db = FirebaseFirestore.getInstance();
         render();
+
+        btn_cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, CartActivity.class);
+                startActivity(intent);
+//                finish();
+            }
+        });
     }
 
     private void render() {
-//        progressBar.setIndeterminate(true);
-        progressBar.setVisibility(View.VISIBLE);
+//        progressBar.setVisibility(View.VISIBLE);
         rcl_product.setLayoutManager(new GridLayoutManager(this, 2));
         products = new ArrayList<Product>();
         productAdapter = new ProductHomeAdapter(this, products);
@@ -78,7 +91,7 @@ public class HomeActivity extends AppCompatActivity {
                         } else {
                             Toast.makeText(getApplicationContext(), "Đã xảy ra lỗi nào đó.", Toast.LENGTH_SHORT).show();
                         }
-                        progressBar.setVisibility(View.GONE);
+//                        progressBar.setVisibility(View.GONE);
                     }
                 });
 
