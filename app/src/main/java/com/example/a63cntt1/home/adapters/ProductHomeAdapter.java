@@ -13,24 +13,33 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.a63cntt1.R;
+import com.example.a63cntt1.cart.models.CartProduct;
+import com.example.a63cntt1.cart.store.CartManager;
 import com.example.a63cntt1.product.models.Product;
+import com.example.a63cntt1.utils.ToastUtil;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ProductHomeAdapter extends RecyclerView.Adapter<ProductHomeAdapter.ViewHolder> {
     private List<Product> products;
+    private List<CartProduct> cartProducts;
     private Context ctx;
     private FirebaseAuth fauth;
     public ProductHomeAdapter(Context ctx, List<Product> products) {
         this.products = products;
         this.ctx = ctx;
+        fauth = FirebaseAuth.getInstance();
     }
 
     @NonNull
@@ -50,31 +59,58 @@ public class ProductHomeAdapter extends RecyclerView.Adapter<ProductHomeAdapter.
         holder.btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handleClick(p);
+                if(fauth.getCurrentUser() != null)
+                    handleClick(p);
+                else ToastUtil.successToast(ctx, "Chưa đăng nhập !!!");
             }
         });
     }
 
     private void handleClick(Product p) {
-        fauth = FirebaseAuth.getInstance();
-        final Map<String, Object> cartMap = new HashMap<>();
-        cartMap.put("name", p.getName());
-        cartMap.put("price", p.getPrice());
-        cartMap.put("image", p.getImage());
 
-        DocumentReference cartRef = FirebaseFirestore.getInstance().collection("cart").document(fauth.getCurrentUser().getUid());
+        /** C1: Lưu Cart trên Local */
+//        cartProducts = new ArrayList<>();
+//        cartProducts.add(new CartProduct(p, 1));
+        CartManager.getInstance().addToCart(new CartProduct(p, 1));
+        ToastUtil.successToast(ctx, "Thêm " + p.getName() + " thành công");
 
-        cartRef.set(cartMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Toast.makeText(ctx, "Thêm "+p.getName() + " thành công !!!", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(ctx, "Có lỗi xảy ra !!!", Toast.LENGTH_SHORT).show();
-            }
-        });
+/**
+ * C2: Lưu cart trên firebase
+ * */
+
+//        final Map<String, Object> cartMap = new HashMap<>();
+//        cartMap.put("name", p.getName());
+//        cartMap.put("price", p.getPrice());
+//        cartMap.put("image", p.getImage());
+//        cartMap.put("quantity", 1);
+
+//        DocumentReference cartRef = FirebaseFirestore.getInstance().collection("cart")
+//                .document(fauth.getCurrentUser().getUid())
+//                .collection("children").document(Integer.toString(p.getId()));
+//
+//        cartRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                if(task.isSuccessful()){
+//                    DocumentSnapshot doc = task.getResult();
+//                    if(doc.exists()){
+//                        ToastUtil.successToast(ctx, "Sản phẩm đã có trong giỏ hàng");
+//                    }else{
+//                        cartRef.set(cartMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void unused) {
+//                                ToastUtil.successToast(ctx, "Thêm " + p.getName() + " thành công");
+//                            }
+//                        }).addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                ToastUtil.successToast(ctx, "Có lỗi gì đó.");
+//                            }
+//                        });
+//                    }
+//                }
+//            }
+//        });
 
     }
 
